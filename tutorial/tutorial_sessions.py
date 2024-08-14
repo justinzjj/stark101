@@ -25,10 +25,10 @@ def part1():
     t = [FieldElement(1), FieldElement(3141592)]
     while len(t) < 1023:
         t.append(t[-2] * t[-2] + t[-1] * t[-1])
-    g = FieldElement.generator() ** (3 * 2 ** 20)
-    points = [g ** i for i in range(1024)]
-    h_gen = FieldElement.generator() ** ((2 ** 30 * 3) // 8192)
-    h = [h_gen ** i for i in range(8192)]
+    g = FieldElement.generator() ** (3 * 2**20)
+    points = [g**i for i in range(1024)]
+    h_gen = FieldElement.generator() ** ((2**30 * 3) // 8192)
+    h = [h_gen**i for i in range(8192)]
     domain = [FieldElement.generator() * x for x in h]
     p = interpolate_poly(points[:-1], t)
     ev = [p.eval(d) for d in domain]
@@ -70,11 +70,12 @@ def part2():
     ch.send(cp_mt.root)
     return cp, cp_ev, cp_mt, ch, domain
 
+
 # from part 3
 
 
 def next_fri_domain(domain):
-    return [x ** 2 for x in domain[:len(domain) // 2]]
+    return [x**2 for x in domain[: len(domain) // 2]]
 
 
 def next_fri_polynomial(poly, alpha):
@@ -101,7 +102,9 @@ def part3():
     merkles = [cp_mt]
     while fri_polys[-1].degree() > 0:
         alpha = ch.receive_random_field_element()
-        next_poly, next_dom, next_layer = next_fri_layer(fri_polys[-1], fri_doms[-1], alpha)
+        next_poly, next_dom, next_layer = next_fri_layer(
+            fri_polys[-1], fri_doms[-1], alpha
+        )
         fri_polys.append(next_poly)
         fri_doms.append(next_dom)
         fri_layers.append(next_layer)

@@ -18,7 +18,7 @@ to review. Slides and links (to this repositories' content) are also included.
 
 ## Run Online
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/starkware-industries/stark101/master?urlpath=lab%2Ftree%2Ftutorial%2FNotebookTutorial.ipynb)
+[![Binder](%E9%99%84%E4%BB%B6/pic/7d534c7a3e4aadaf6e06f4439b33f557_MD5.svg)](https://mybinder.org/v2/gh/starkware-industries/stark101/master?urlpath=lab%2Ftree%2Ftutorial%2FNotebookTutorial.ipynb)
 
 ## Run Locally
 
