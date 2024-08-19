@@ -95,6 +95,7 @@ def next_fri_layer(poly, dom, alpha):
 
 def part3():
     cp, cp_ev, cp_mt, ch, domain = part2()
+    # cp, cp_eval, cp_merkle, channel, eval_domain
     # FriCommit function
     fri_polys = [cp]
     fri_doms = [domain]
