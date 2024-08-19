@@ -8,7 +8,7 @@ LastEditTime: 2024-08-14 08:58:04
 """
 
 from field import FieldElement
-from polynomial import interpolate_poly, X
+from polynomial import interpolate_poly, X, Polynomial
 from merkle import MerkleTree
 from channel import Channel
 
@@ -103,5 +103,73 @@ channel.send(CP_merkle.root)
 """
 ==================================================================
 ==============================Part.3==============================
+==================================================================
+"""
+
+
+# 获取下一层的定义域
+# 就是获取这一层的前一半的元素，然后再平方
+def next_fri_domain(fri_domain):
+    tmp = []
+    # 获取fri_domain的前一半的元素，再平方
+    for i in range(len(fri_domain) // 2):
+        tmp.append(fri_domain[i] ** 2)
+    return tmp
+
+
+# 获取下一层的多项式
+# 就是把多项式的奇数系数和偶数系数分别取出来，然后奇数系数乘以beta加上偶数系数
+# 实现了多项式的降阶
+def next_fri_polynomial(poly, beta):
+    # 这里取出来了两个系数列表，一个是奇数项，一个是偶数项
+    odd_coefficients = poly.poly[1::2]  # No need to fix this line.
+    even_coefficients = poly.poly[::2]  # No need to fix this line either.
+    # 系数列表减半了，所以多项式的阶也就减半了，实现了多项式的降阶
+    # 然后在这里构造了新的多项式
+    odd = beta * Polynomial(odd_coefficients)
+    even = Polynomial(even_coefficients)
+    return odd + even
+
+
+# 获取FRI的下一层
+def next_fri_layer(poly, domain, beta):
+    next_poly = next_fri_polynomial(poly, beta)
+    next_domain = next_fri_domain(domain)
+    next_layer = []
+    for x in next_domain:
+        next_layer.append(next_poly(x))
+    return next_poly, next_domain, next_layer
+
+
+# 构建FRI Commitment
+def FriCommit(cp, domain, cp_eval, cp_merkle, channel):
+    fri_polys = [cp]
+    fri_domains = [domain]
+    fri_layers = [cp_eval]
+    fri_merkles = [cp_merkle]
+    while (
+        fri_polys[-1].degree() > 0
+    ):  # Replace this with the correct halting condition.
+        beta = (
+            channel.receive_random_field_element()
+        )  # Change to obtain a random element from the channel.
+        next_poly, next_domain, next_layer = next_fri_layer(
+            fri_polys[-1], fri_domains[-1], beta
+        )  # Fix to obtain the next FRI polynomial, domain, and layer.
+
+        fri_polys.append(next_poly)
+        fri_domains.append(next_domain)
+        fri_layers.append(next_layer)
+
+        fri_merkle = MerkleTree(next_layer)
+        channel.send(fri_merkle.root)  # Fix to send the correct commitment.
+        fri_merkles.append(fri_merkle)  # Fix to construct the correct Merkle tree.
+    channel.send(str(fri_polys[-1].poly[0]))  # Fix to send the last layer's free term.
+    return fri_polys, fri_domains, fri_layers, fri_merkles
+
+
+"""
+==================================================================
+==============================Part.4==============================
 ==================================================================
 """
