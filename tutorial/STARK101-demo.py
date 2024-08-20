@@ -60,7 +60,7 @@ def gengerating_trace(channel):
     # 5. 构建Merkle树，构建commitment
     f_merkle = MerkleTree(f_eval)
     channel.send(f_merkle.root)
-    return (g, G, eval_domain, f, f_eval, f_merkle)
+    return (g, eval_domain, f, f_eval, f_merkle)
 
 
 def generating_composition_polynomial(g, eval_domain, f, channel):
@@ -215,7 +215,7 @@ def main():
     # Generating the trace...
     start_all = start
     print_section_header("Generating the trace...")
-    g, G, eval_domain, f, f_eval, f_merkle = gengerating_trace(channel)
+    g, eval_domain, f, f_eval, f_merkle = gengerating_trace(channel)
     print(f"{time.time() - start}s")
 
     # Generating the composition polynomial
